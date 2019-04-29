@@ -1,16 +1,15 @@
 import { Injectable, Inject } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
 import { ChartModel } from '../interfaces/ichart-model';
-import { Subject } from 'rxjs'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalRService {
 
-  constructor(@Inject('BASE_URL') baseUrl: string) {}
+  constructor() {}
 
-  public data: Subject<ChartModel[]> = new Subject<ChartModel[]>();
+  public data: ChartModel[];
 
   private hubConnection: signalR.HubConnection;
 
@@ -30,7 +29,7 @@ export class SignalRService {
 
   public addTransferChartDataListener = () => {
     this.hubConnection.on('transferchartdata', (data) => {
-      this.data.next(data);
+      this.data = data;
       console.log(data);
     });
   }
