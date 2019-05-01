@@ -10,11 +10,6 @@ import { ChartModel } from 'src/app/interfaces/ichart-model';
 })
 export class ChartComponent implements OnInit {
 
-  constructor(
-    public http: HttpClient,
-    public signalRService: SignalRService
-  ) { }
-
   public chartOptions: any = {
     scaleShowVerticalLines: true,
     responsive: true,
@@ -32,10 +27,21 @@ export class ChartComponent implements OnInit {
   public colors: any[] = [{ backgroundColor: '#5491DA' }, { backgroundColor: '#E74C3C' }, { backgroundColor: '#82E0AA' }, { backgroundColor: '#E5E7E9' }]
   public data: ChartModel[];
 
+  constructor(
+    public http: HttpClient,
+    public signalRService: SignalRService
+  ) { }
+
   ngOnInit() {
     this.signalRService.startConnection();
     this.signalRService.addTransferChartDataListener();
+    this.signalRService.addBroadcastChartDataListener();
     this.startHttpRequest();
+  }
+
+  public chartClicked = (event) => {
+    console.log(event);
+    this.signalRService.broadcastChartData(event.event);
   }
 
   private startHttpRequest = () => {
@@ -44,5 +50,5 @@ export class ChartComponent implements OnInit {
         console.log(res);
       })
   }
-
+  
 }

@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as signalR from "@aspnet/signalr";
 import { ChartModel } from '../interfaces/ichart-model';
 
@@ -10,6 +10,7 @@ export class SignalRService {
   constructor() {}
 
   public data: ChartModel[];
+  public bradcastedData: ChartModel[];
 
   private hubConnection: signalR.HubConnection;
 
@@ -32,5 +33,17 @@ export class SignalRService {
       this.data = data;
       console.log(data);
     });
+  }
+
+  public broadcastChartData = (event: MouseEvent) => {
+    this.hubConnection.invoke('broadcastchartdata', [{ label: 'Current Mouse Position', data: [event.clientX, event.clientY] }])
+      .then(() => console.log('Sent'))
+      .catch(err => console.error(err));
+  }
+
+  public addBroadcastChartDataListener = () => {
+    this.hubConnection.on('broadcastchartdata', (data) => {
+      this.bradcastedData = data;
+    })
   }
 }
